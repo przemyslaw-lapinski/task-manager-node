@@ -16,7 +16,19 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+        expect(appController.getHello()).toEqual({ message: 'Hello World!' });
+    });
+  });
+
+  describe('healthz', () => {
+    it('should return status OK', () => {
+        expect(appController.healthz()).toEqual({ status: 'OK' });
+    });
+  });
+
+  describe('readyz', () => {
+    it('should return status OK', () => {
+        expect(appController.readyz()).toEqual({ status: 'OK' });
     });
   });
 });
