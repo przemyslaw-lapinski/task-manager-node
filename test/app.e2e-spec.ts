@@ -1,42 +1,48 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from '../src/app.module';
+import {Test, TestingModule} from '@nestjs/testing';
+import {AppModule} from '../src/app.module';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+    let app: INestApplication;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    beforeAll(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+        app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
+        await app.init();
+        await app.listen(0);
+    });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200);
-  });
+    afterAll(async () => {
+        await app.close();
+    });
 
-  it ('/healthz (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/healthz')
-      .expect(200)
-      .expect({ status: 'OK' });
-  });
+    it('/ (GET)', async () => {
+        const response = await app.getHttpAdapter().getInstance().inject({
+            method: 'GET',
+            url: '/',
+        });
+        expect(response.statusCode).toBe(200);
+        expect(response.json()).toEqual({ message: expect.any(String) });
+    });
 
-  it('/readyz (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/readyz')
-      .expect(200)
-      .expect({ status: 'OK' });
-  });
+    it('/healthz (GET)', async () => {
+        const response = await app.getHttpAdapter().getInstance().inject({
+            method: 'GET',
+            url: '/healthz',
+        });
+        expect(response.statusCode).toBe(200);
+        expect(response.json()).toEqual({ status: 'OK' });
+    });
 
-  afterAll(async () => {
-    await app.close();
-  });
+    it('/readyz (GET)', async () => {
+        const response = await app.getHttpAdapter().getInstance().inject({
+            method: 'GET',
+            url: '/readyz',
+        });
+        expect(response.statusCode).toBe(200);
+        expect(response.json()).toEqual({ status: 'OK' });
+    });
 });
