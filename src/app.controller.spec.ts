@@ -5,6 +5,7 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 
 describe('AppController', () => {
     let appController: AppController;
+    let configService: ConfigService;
 
     beforeEach(async () => {
         const app: TestingModule = await Test.createTestingModule({
