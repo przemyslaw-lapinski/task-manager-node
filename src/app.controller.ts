@@ -7,16 +7,16 @@ export class AppController {
 
   @Get()
   getHello(): { message: string } {
-      return { message: this.appService.getHello() };
+    return { message: this.appService.getHello() };
   }
 
   @Get('/healthz')
   healthz(): { status: string } {
-      return { status: 'OK' };
+    return { status: 'OK' };
   }
 
   @Get('/readyz')
   readyz(): { status: string } {
-      return { status: 'OK' };
+    return { status: 'OK' };
   }
 }
