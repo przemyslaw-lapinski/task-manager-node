@@ -21,6 +21,14 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@shared/shared": [
+        "libs/shared/src"
+      ],
+      "@shared/shared/*": [
+        "libs/shared/src/*"
+      ]
+    }
   }
 }
